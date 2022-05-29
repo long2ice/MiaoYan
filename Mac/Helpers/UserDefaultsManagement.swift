@@ -25,7 +25,8 @@ public class UserDefaultsManagement {
     static var DefaultFontColor = Color(red: 0.38, green: 0.38, blue: 0.38, alpha: 1.00)
     static var DefaultBgColor = Color.white
 
-    static var codeFontName = DefaultFont
+//    static var codeFontName = DefaultFont
+
     static var lineWidth = 1000
     static var linkColor = Color(red: 0.23, green: 0.23, blue: 0.23, alpha: 1.00)
     static var fullScreen = false
@@ -34,13 +35,13 @@ public class UserDefaultsManagement {
     static var maxNightModeBrightnessLevel = 35
 
     static var lastProject = 0
-    static var fontName = DefaultFont
+//    static var fontName = DefaultFont
     static var previewFontSize = 14
     static var sortDirection = true
     static var marginSize = 28
     static var realSidebarSize = 200
 
-    private struct Constants {
+    private enum Constants {
         static let AppearanceTypeKey = "appearanceType"
         static let BgColorKey = "bgColorKeyed"
         static let CellFrameOriginY = "cellFrameOriginY"
@@ -95,35 +96,25 @@ public class UserDefaultsManagement {
         }
     }
 
-    static var codeFont: Font! {
+    static var fontName: String? {
         get {
-            if let font = Font(name: self.fontName, size: CGFloat(self.codeFontSize)) {
-                return font
-            }
-
-            return Font.systemFont(ofSize: CGFloat(self.codeFontSize))
+            return "JetBrains Mono"
         }
         set {
-            guard let newValue = newValue else { return }
-
-            self.codeFontName = newValue.fontName
-            self.codeFontSize = Int(newValue.pointSize)
+            UserDefaults.standard.set(newValue, forKey: Constants.FontNameKey)
         }
     }
 
-    static var noteFont: Font! {
+    static var codeFontName: String {
         get {
-            if let font = Font(name: self.fontName, size: CGFloat(self.fontSize)) {
-                return font
+            if let returnFontName = UserDefaults.standard.object(forKey: Constants.CodeFontNameKey) {
+                return returnFontName as! String
+            } else {
+                return "Source Code Pro"
             }
-
-            return Font.systemFont(ofSize: CGFloat(self.fontSize))
         }
         set {
-            guard let newValue = newValue else { return }
-
-            self.fontName = newValue.fontName
-            self.fontSize = Int(newValue.pointSize)
+            UserDefaults.standard.set(newValue, forKey: Constants.CodeFontNameKey)
         }
     }
 
@@ -381,7 +372,8 @@ public class UserDefaultsManagement {
     static var markdownPreviewCSS: URL? {
         get {
             if let path = UserDefaults.standard.object(forKey: Constants.MarkdownPreviewCSS) as? String,
-                let encodedPath = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) {
+               let encodedPath = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+            {
                 if FileManager.default.fileExists(atPath: path) {
                     return URL(string: "file://" + encodedPath)
                 }

@@ -48,18 +48,18 @@ public class ImagesProcessor {
             range = NSRange(location: range.location - offset, length: range.length)
             let mdLink = self.styleApplier.attributedSubstring(from: range).string
             let title = self.getTitle(link: mdLink)
-            
-            if var font = UserDefaultsManagement.noteFont {
-                #if os(iOS)
-                if #available(iOS 11.0, *), UserDefaultsManagement.dynamicTypeFont {
-                    let fontMetrics = UIFontMetrics(forTextStyle: .body)
-                    font = fontMetrics.scaledFont(for: font)
-                }
-                #endif
-            
-                self.styleApplier.addAttribute(.font, value: font, range: range)
-            }
-            
+//
+//            if var font = UserDefaultsManagement.noteFont {
+//                #if os(iOS)
+//                if #available(iOS 11.0, *), UserDefaultsManagement.dynamicTypeFont {
+//                    let fontMetrics = UIFontMetrics(forTextStyle: .body)
+//                    font = fontMetrics.scaledFont(for: font)
+//                }
+//                #endif
+//
+//                self.styleApplier.addAttribute(.font, value: font, range: range)
+//            }
+//
             NotesTextProcessor.parenRegex.matches(self.styleApplier.string, range: range) { (innerResult) -> Void in
                 guard let innerRange = innerResult?.range else {
                     return

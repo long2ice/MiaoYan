@@ -317,6 +317,17 @@ public class TextFormatter {
             let newDigit = found.replacingOccurrences(of: String(position), with: String(position + 1))
             insertText("\n" + newDigit)
         }
+        updateCurrentParagraph()
+    }
+    
+    private func updateCurrentParagraph() {
+        let parRange = getParagraphRange(for: textView.selectedRange.location)
+
+        #if os(iOS)
+            textView.textStorage.updateParagraphStyle(range: parRange)
+        #else
+            textView.textStorage?.updateParagraphStyle(range: parRange)
+        #endif
     }
 
     public func newLine() {
@@ -520,14 +531,14 @@ public class TextFormatter {
             let text = storage.attributedSubstring(from: selectedRange).string
             let string = "`\(text)`"
 
-            if let codeFont = UserDefaultsManagement.codeFont {
-                let mutableString = NSMutableAttributedString(string: string)
-                mutableString.addAttribute(.font, value: codeFont, range: NSRange(0..<string.count))
-
-                EditTextView.shouldForceRescan = true
-                insertText(mutableString, replacementRange: selectedRange)
-                return
-            }
+//            if let codeFont = UserDefaultsManagement.codeFont {
+//                let mutableString = NSMutableAttributedString(string: string)
+//                mutableString.addAttribute(.font, value: codeFont, range: NSRange(0..<string.count))
+//
+//                EditTextView.shouldForceRescan = true
+//                insertText(mutableString, replacementRange: selectedRange)
+//                return
+//            }
         }
 
         insertText("``")
@@ -625,18 +636,18 @@ public class TextFormatter {
     }
     
     deinit {
-        if note.isMarkdown() {
-            if var font = UserDefaultsManagement.noteFont {
-                #if os(iOS)
-                if #available(iOS 11.0, *), UserDefaultsManagement.dynamicTypeFont {
-                    let fontMetrics = UIFontMetrics(forTextStyle: .body)
-                    font = fontMetrics.scaledFont(for: font)
-                }
-                #endif
-                
-                setTypingAttributes(font: font)
-            }
-        }
+//        if note.isMarkdown() {
+//            if var font = UserDefaultsManagement.noteFont {
+//                #if os(iOS)
+//                if #available(iOS 11.0, *), UserDefaultsManagement.dynamicTypeFont {
+//                    let fontMetrics = UIFontMetrics(forTextStyle: .body)
+//                    font = fontMetrics.scaledFont(for: font)
+//                }
+//                #endif
+//                
+//                setTypingAttributes(font: font)
+//            }
+//        }
         
         if self.shouldScanMarkdown, let paragraphRange = getParagraphRange() {
             NotesTextProcessor.highlightMarkdown(attributedString: storage, paragraphRange: paragraphRange, note: note)

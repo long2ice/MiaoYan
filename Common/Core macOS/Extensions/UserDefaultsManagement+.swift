@@ -1,9 +1,9 @@
+import AppKit
 import Foundation
 import MASShortcut
-import AppKit
 
 extension UserDefaultsManagement {
-    private struct Constants {
+    private enum Constants {
         static let AppearanceTypeKey = "appearanceType"
         static let codeTheme = "codeTheme"
         static let dockIcon = "dockIcon"
@@ -35,7 +35,7 @@ extension UserDefaultsManagement {
             let code = UserDefaults.standard.object(forKey: Constants.NewNoteKeyCode)
             let modifier = UserDefaults.standard.object(forKey: Constants.NewNoteKeyModifier)
 
-            if code != nil && modifier != nil, let keyCode = code as? UInt, let modifierFlags = modifier as? UInt {
+            if code != nil, modifier != nil, let keyCode = code as? UInt, let modifierFlags = modifier as? UInt {
                 return MASShortcut(keyCode: Int(keyCode), modifierFlags: NSEvent.ModifierFlags(rawValue: modifierFlags))
             }
 
@@ -52,7 +52,7 @@ extension UserDefaultsManagement {
             let code = UserDefaults.standard.object(forKey: Constants.SearchNoteKeyCode)
             let modifier = UserDefaults.standard.object(forKey: Constants.SearchNoteKeyModifier)
 
-            if code != nil && modifier != nil, let keyCode = code as? UInt, let modifierFlags = modifier as? UInt {
+            if code != nil, modifier != nil, let keyCode = code as? UInt, let modifierFlags = modifier as? UInt {
                 return MASShortcut(keyCode: Int(keyCode), modifierFlags: NSEvent.ModifierFlags(rawValue: modifierFlags))
             }
 
@@ -96,6 +96,38 @@ extension UserDefaultsManagement {
 
         set {
             UserDefaults.standard.set(newValue, forKey: Constants.dockIcon)
+        }
+    }
+
+    static var noteFont: NSFont {
+        get {
+            if let name = fontName, name.starts(with: ".") {
+                return NSFont.systemFont(ofSize: CGFloat(self.fontSize))
+            }
+
+            if let fontName = self.fontName, let font = NSFont(name: fontName, size: CGFloat(self.fontSize)) {
+                return font
+            }
+
+            return NSFont.systemFont(ofSize: CGFloat(self.fontSize))
+        }
+        set {
+            self.fontName = newValue.fontName
+            self.fontSize = Int(newValue.pointSize)
+        }
+    }
+    
+    static var codeFont: NSFont {
+        get {
+            if let font = NSFont(name: self.codeFontName, size: CGFloat(self.codeFontSize)) {
+                return font
+            }
+
+            return NSFont.systemFont(ofSize: CGFloat(self.codeFontSize))
+        }
+        set {
+            self.codeFontName = newValue.familyName ?? "Source Code Pro"
+            self.codeFontSize = Int(newValue.pointSize)
         }
     }
 }

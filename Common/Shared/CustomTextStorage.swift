@@ -40,6 +40,7 @@ extension NSTextStorage: NSTextStorageDelegate {
 
         loadImages(textStorage: textStorage, checkRange: editedRange)
 
+        updateParagraphStyle()
         EditTextView.shouldForceRescan = false
         EditTextView.lastRemoved = nil
     }
@@ -129,6 +130,8 @@ extension NSTextStorage: NSTextStorageDelegate {
         var parRange = textStorage.mutableString.paragraphRange(for: editedRange)
         let paragraph = textStorage.mutableString.substring(with: parRange)
 
+        updateParagraphStyle(range: parRange)
+        
         if paragraph.count == 2, textStorage.attributedSubstring(from: parRange).attribute(.backgroundColor, at: 1, effectiveRange: nil) != nil {
             if let ranges = codeTextProcessor.getCodeBlockRanges(parRange: parRange) {
                 let invalidateBackgroundRange =
